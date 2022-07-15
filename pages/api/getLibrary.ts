@@ -12,5 +12,19 @@ export default async function handler(
   );
   const data = await resp.json();
 
-  res.status(200).json(data);
+  const games = data?.response?.games.splice(0, 3);
+
+  const mapped = games.map(async (game: any) => {
+    const response = await fetch(
+      `https://store.steampowered.com/api/appdetails?appids=${game.appid}`
+    );
+    const gameData = await response.json();
+    console.log(gameData);
+
+    return { game: gameData[game.appid].data };
+  });
+
+  const gameData = await Promise.all(mapped);
+
+  res.status(200).json(gameData);
 }

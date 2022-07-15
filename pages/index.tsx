@@ -13,7 +13,7 @@ const Home: NextPage = () => {
       const res = await fetch("/api/getLibrary");
       const data = await res.json();
       console.log(data);
-      setGames(data.response.games);
+      // setGames(data.response.games);
     };
     getGames();
   }, []);
