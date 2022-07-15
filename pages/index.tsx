@@ -1,4 +1,4 @@
-import type { NextPage } from "next";
+import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -6,58 +6,27 @@ import styles from "../styles/Home.module.css";
 
 const Home: NextPage = () => {
   const [games, setGames] = useState([]);
-  const [allGames, setAllGames] = useState([]);
+  const [user, setUser] = useState(null);
+
+  const mySteamId = "76561198012718791";
 
   useEffect(() => {
     const getGames = async () => {
-      const res = await fetch("/api/getLibrary");
+      const res = await fetch(`/api/games/${mySteamId}`);
       const data = await res.json();
-      console.log(data);
-      // setGames(data.response.games);
+      setGames(data);
     };
     getGames();
   }, []);
 
   useEffect(() => {
-    const getName = async (id) => {
-      // const resp = await fetch(`/api/getName`);
-      // console.log(resp);
+    const getUser = async () => {
+      const resp = await fetch(`/api/user/${mySteamId}`);
+      const user = await resp.json();
+      setUser(user);
     };
-    // const mapAllGames = async () => {
-    //   let mappedGames = await Promise.all(
-    //     games.map(async (item: any) => {
-    //       return {
-    //         appid: item.appid,
-    //         title: await fetch(
-    //           `https://store.steampowered.com/api/appdetails?appids=${item.appid}`
-    //         ),
-    //       };
-    //     })
-    //   );
-
-    //   setAllGames(mappedGames);
-    // };
-
-    getName(10);
-    // mapAllGames();
-  }, [games]);
-
-  // useEffect(() => {
-  //   const getGameObjs = async () => {
-  //     const namedGames = await Promise.all(
-  //       games.map(async (game: any) => {
-  //         console.log(game.appid);
-  //         const gameName = await fetch(
-  //           `https://store.steampowered.com/api/appdetails?appids=${game.appid}`
-  //         );
-  //         console.log(gameName);
-  //       })
-  //     );
-  //   };
-  //   if (games && games.length > 0) {
-  //     getGameObjs();
-  //   }
-  // }, [games]);
+    getUser();
+  }, []);
 
   return (
     <>
@@ -68,8 +37,12 @@ const Home: NextPage = () => {
       </Head>
 
       <main>
-        <h1 className="text-4xl">hi jonas u stupid fuck</h1>
-        {JSON.stringify(games)}
+        <h1 className="text-4xl">{user?.personaname}</h1>
+        <div>
+          {games.map((game: any) => (
+            <p key={game.name}>{game.name}</p>
+          ))}
+        </div>
       </main>
 
       <footer></footer>
