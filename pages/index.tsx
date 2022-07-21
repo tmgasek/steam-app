@@ -1,32 +1,16 @@
 import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import styles from "../styles/Home.module.css";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
+import Library from "../components/Library";
+import Search from "../components/Search";
 
 const Home: NextPage = () => {
   const [games, setGames] = useState([]);
   const [user, setUser] = useState(null);
 
-  const mySteamId = "76561198012718791";
-
-  useEffect(() => {
-    const getGames = async () => {
-      const res = await fetch(`/api/games/${mySteamId}`);
-      const data = await res.json();
-      setGames(data);
-    };
-    getGames();
-  }, []);
-
-  useEffect(() => {
-    const getUser = async () => {
-      const resp = await fetch(`/api/user/${mySteamId}`);
-      const user = await resp.json();
-      setUser(user);
-    };
-    getUser();
-  }, []);
+  console.log({ user });
+  console.log({ games });
 
   return (
     <>
@@ -37,15 +21,11 @@ const Home: NextPage = () => {
       </Head>
 
       <main>
-        <h1 className="text-4xl">{user?.personaname}</h1>
-        <div>
-          {games.map((game: any) => (
-            <p key={game.name}>{game.name}</p>
-          ))}
-        </div>
+        <Search setGames={setGames} setUser={setUser} />
+        {user ? <Library user={user} games={games} /> : null}
       </main>
 
-      <footer></footer>
+      {/* <footer></footer> */}
     </>
   );
 };
