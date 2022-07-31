@@ -1,8 +1,9 @@
+import { BasicGame, User } from "@types";
 import React, { FormEvent } from "react";
 
 interface Props {
-  setUser: (user: any) => void;
-  setGames: (games: any) => void;
+  setUser: (user: User) => void;
+  setGames: (games: BasicGame[]) => void;
 }
 
 const Search = ({ setUser, setGames }: Props) => {
@@ -47,7 +48,7 @@ https://steamcommunity.com/id/mirko2828/
   };
 
   return (
-    <div className="h-screen w-screen flex justify-center items-center">
+    <div className="">
       <form
         className="flex flex-col justify-center items-center"
         onSubmit={handleSubmit}

@@ -2,12 +2,13 @@ import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import React, { FormEvent, useEffect, useRef, useState } from "react";
-import Library from "../components/Library";
-import Search from "../components/Search";
+import Library from "@/components/Library";
+import Search from "@/components/Search";
+import { BasicGame, User } from "@types";
 
 const Home: NextPage = () => {
-  const [games, setGames] = useState([]);
-  const [user, setUser] = useState(null);
+  const [games, setGames] = useState<BasicGame[] | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   console.log({ user });
   console.log({ games });
@@ -22,7 +23,7 @@ const Home: NextPage = () => {
 
       <main>
         <Search setGames={setGames} setUser={setUser} />
-        {user ? <Library user={user} games={games} /> : null}
+        {user && games ? <Library user={user} games={games} /> : null}
       </main>
 
       {/* <footer></footer> */}
