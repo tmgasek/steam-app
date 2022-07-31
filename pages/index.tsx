@@ -2,16 +2,14 @@ import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import React, { FormEvent, useEffect, useRef, useState } from "react";
-import Library from "@/components/Library";
+import Randomiser from "@/components/Randomiser";
 import Search from "@/components/Search";
 import { BasicGame, User } from "@types";
 
-const Home: NextPage = () => {
+export default function Home() {
   const [games, setGames] = useState<BasicGame[] | null>(null);
   const [user, setUser] = useState<User | null>(null);
-
-  console.log({ user });
-  console.log({ games });
+  const [mode, setMode] = useState<"search" | "randomiser">("search");
 
   return (
     <>
@@ -22,13 +20,16 @@ const Home: NextPage = () => {
       </Head>
 
       <main>
-        <Search setGames={setGames} setUser={setUser} />
-        {user && games ? <Library user={user} games={games} /> : null}
+        {mode === "search" && (
+          <Search setMode={setMode} setGames={setGames} setUser={setUser} />
+        )}
+
+        {mode === "randomiser" && user && games ? (
+          <Randomiser setMode={setMode} user={user} games={games} />
+        ) : null}
       </main>
 
       {/* <footer></footer> */}
     </>
   );
-};
-
-export default Home;
+}
