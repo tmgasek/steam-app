@@ -7,10 +7,6 @@ import Search from "@/components/Search";
 import { BasicGame, User } from "@types";
 
 export default function Home() {
-  const [games, setGames] = useState<BasicGame[] | null>(null);
-  const [user, setUser] = useState<User | null>(null);
-  const [mode, setMode] = useState<"search" | "randomiser">("search");
-
   return (
     <>
       <Head>
@@ -20,13 +16,7 @@ export default function Home() {
       </Head>
 
       <main>
-        {mode === "search" && (
-          <Search setMode={setMode} setGames={setGames} setUser={setUser} />
-        )}
-
-        {mode === "randomiser" && user && games ? (
-          <Randomiser setMode={setMode} user={user} games={games} />
-        ) : null}
+        <Search />
       </main>
 
       {/* <footer></footer> */}

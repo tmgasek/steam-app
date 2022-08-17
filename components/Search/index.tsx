@@ -1,30 +1,24 @@
 import { BasicGame, User } from "@types";
 import React, { FormEvent, useState } from "react";
 import { motion } from "framer-motion";
+import { useRouter } from "next/router";
+import styled from "styled-components";
 
 interface Props {
   setUser: (user: User | null) => void;
   setGames: (games: BasicGame[] | null) => void;
-  setMode: (mode: "search" | "randomiser") => void;
 }
 
-export default function Search({ setUser, setGames, setMode }: Props) {
+export default function Search() {
   const userInputRef =
     React.useRef() as React.MutableRefObject<HTMLInputElement>;
   const [error, setError] = useState<string | null>(null);
-  const [showFull, setShowFull] = useState(true);
   const [loading, setLoading] = useState(false);
-  /*
-  https://steamcommunity.com/profiles/76561198008087615/
-  https://steamcommunity.com/id/JEPZTEIN/
-  https://steamcommunity.com/id/mirko2828/
-  https://steamcommunity.com/profiles/76561198053881733
-  */
+  const router = useRouter();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setUser(null);
-    setGames(null);
+
     setError(null);
     setLoading(true);
 
@@ -59,55 +53,31 @@ export default function Search({ setUser, setGames, setMode }: Props) {
       }
     }
 
-    try {
-      const [gamesRes, userRes] = await Promise.all([
-        fetch(`/api/games/${steamId}`),
-        fetch(`/api/user/${steamId}`),
-      ]);
-      const [gamesData, userData] = await Promise.all([
-        gamesRes.json(),
-        userRes.json(),
-      ]);
-      setUser(userData);
-      setGames(gamesData);
-      setMode("randomiser");
-    } catch (error) {
-      console.error(error);
-      setError("Your profile is private or doesn't exist");
-    }
-
+    router.push("/randomise?steamId=" + steamId);
     setLoading(false);
+    return;
   };
 
   return (
-    <motion.div className="flex flex-col justify-center items-center py-4">
-      https://steamcommunity.com/profiles/76561198053881733
+    <motion.div>
+      {/* https://steamcommunity.com/profiles/76561198053881733
       <br />
-      https://steamcommunity.com/id/JEPZTEIN/
-      <form
-        className="flex flex-col justify-center items-center"
-        onSubmit={handleSubmit}
-      >
+    https://steamcommunity.com/id/JEPZTEIN/ */}
+      <h1>Too many steam games? Never know what to play?</h1>
+      <h2>I got you.</h2>
+      <form onSubmit={handleSubmit}>
         <label htmlFor="user-input">Enter your steam profile URL</label>
         <input
-          className={`bg-gray-200 appearance-none border-2 border-gray-200 rounded  py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-red-700 text-center w-96 
-          `}
           ref={userInputRef}
           id="user-input"
           placeholder="profile URL"
           type="text"
         />
-        <motion.button
-          whileTap={{ scale: 0.9 }}
-          className="my-4 bg-transparent hover:bg-red-700 text-red-40 font-semibold hover:text-black py-2 px-4 border border-red-700 w-min  hover:border-transparent rounded"
-          type="submit"
-        >
+        <motion.button whileTap={{ scale: 0.9 }} type="submit">
           Submit
         </motion.button>
       </form>
-      {error ? (
-        <p className="max-w-md text-center text-red-400">{error}</p>
-      ) : null}
+      {error ? <p>{error}</p> : null}
       {loading ? <p>LOADING...</p> : null}
     </motion.div>
   );

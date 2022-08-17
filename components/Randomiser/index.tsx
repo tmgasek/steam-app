@@ -2,16 +2,24 @@ import React, { useEffect, useState } from "react";
 import { BasicGame, GameData, User } from "@types";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import { useRouter } from "next/router";
+import { useDebounce } from "../../hooks/useDebounce";
+
+//TODO:
+/*
+Debounce the onClick randomiser
+Fix the background image / Image cmp smoothness (quality?)
+*/
 
 type LibraryProps = {
   user: User;
   games: BasicGame[];
-  setMode: (mode: "search" | "randomiser") => void;
 };
 
-export default function Randomiser({ user, games, setMode }: LibraryProps) {
+export default function Randomiser({ user, games }: LibraryProps) {
   const [chosenGame, setChosenGame] = useState<BasicGame | null>(null);
   const [imgBg, setImgBg] = useState<string>("");
+  const router = useRouter();
 
   const selectGame = () => {
     // get random game from games array
@@ -33,40 +41,26 @@ export default function Randomiser({ user, games, setMode }: LibraryProps) {
           objectPosition="center"
         />
       )}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.5 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-        className={`flex flex-col items-center h-screen w-screen relative `}
-        style={{
-          backgroundImage: imgBg ? `url(${imgBg})` : "",
-          backgroundPosition: "center",
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          transition: "0.5s linear",
-        }}
+      <div
+      // style={{
+      //   backgroundImage: imgBg ? `url(${imgBg})` : "",
+      //   backgroundPosition: "center",
+      //   backgroundSize: "cover",
+      //   backgroundRepeat: "no-repeat",
+      //   transition: "0.5s linear",
+      // }}
       >
-        <button
-          className="absolute left-50% top-4 border p-2"
-          onClick={() => setMode("search")}
-        >
-          Search again?
-        </button>
-        <div className="mt-44 flex flex-col items-center">
-          <h1 className="text-8xl m-4">Hey, {user?.personaname}</h1>
-          <p className="text-2xl m-4">You have {games.length} games.</p>
+        <button onClick={() => router.push("/")}>Search again?</button>
+        <div>
+          <h1>Hey, {user?.personaname}</h1>
+          <p>You have {games.length} games.</p>
           <p>Not sure what to play?</p>
-          <button
-            className="bg-red-600 text-3xl rounded-2xl m-4 px-8 py-6 hover:contrast-75"
-            onClick={selectGame}
-          >
-            Randomise!
-          </button>
+          <button onClick={selectGame}>Randomise!</button>
         </div>
         {chosenGame ? (
           <ChosenGame game={chosenGame} setImgBg={setImgBg} />
         ) : null}
-      </motion.div>
+      </div>
     </>
   );
 }
@@ -90,7 +84,7 @@ function ChosenGame({ game, setImgBg }: ChosenGameProps) {
       } catch (error) {
         setError("You're going too fast bucko...");
         setTimeout(() => setError(null), 3000);
-        console.log(error);
+        console.error(error);
       }
     };
     getGameInfo();
